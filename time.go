@@ -43,10 +43,11 @@ func Now() Time {
 	calendar := cal.NewCalendar()
 	cal.AddUsHolidays(calendar)
 	calendar.Observed = cal.ObservedMonday
+	loc, _ := time.LoadLocation("America/Los_Angeles")
 
 	return Time{
 		cal:  calendar,
-		Time: time.Now().UTC().Truncate(1 * time.Second),
+		Time: time.Now().In(loc).Truncate(1 * time.Second),
 	}
 }
 
@@ -59,7 +60,8 @@ func Now() Time {
 // fmt.Println(start.Sub(now.Time))
 func NewTime(t time.Time) Time {
 	tt := Now()
-	tt.Time = t.UTC() // overwrite underlying Time
+	loc, _ := time.LoadLocation("America/Los_Angeles")
+	tt.Time = t.In(loc) // overwrite underlying Time
 	return tt
 }
 
@@ -87,8 +89,8 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 		tt, _ = time.Parse(time.RFC3339, string(data))
 		*t = NewTime(tt)
 	}
-
-	t.Time = tt.UTC().Truncate(1 * time.Second) // convert to UTC and drop millis
+		loc, _ := time.LoadLocation("America/Los_Angeles")
+	t.Time = tt.In(loc).Truncate(1 * time.Second) // convert to California and drop millis
 
 	return nil
 }
