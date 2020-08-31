@@ -1,4 +1,4 @@
-github.com/drahosh/moov-base-california
+module github.com/drahosh/moov-base-california
 
 go 1.13
 
